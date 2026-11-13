@@ -1,0 +1,171 @@
+{
+ "v": 2,
+ "regions": [
+  {
+   "id": "sudety-zachodnie",
+   "label": "Karkonosze, Izerskie i Kaczawskie",
+   "pack": "sudety",
+   "version": "2026-11-13T21:06Z",
+   "snapshot": "2026-11-12",
+   "manifest": "sudety/files.json",
+   "bytes": 150196225,
+   "count": 152,
+   "ranges": [
+    "Góry Łużyckie",
+    "Grzbiet Jeszczedu",
+    "Góry Izerskie",
+    "Karkonosze",
+    "Rudawy Janowickie",
+    "Góry Kaczawskie",
+    "Pogórze Kaczawskie"
+   ]
+  },
+  {
+   "id": "sudety-srodkowe",
+   "label": "Wałbrzyskie, Sowie, Stołowe i Ślęża",
+   "pack": "sudety",
+   "version": "2026-11-13T21:06Z",
+   "snapshot": "2026-11-12",
+   "manifest": "sudety/files.json",
+   "bytes": 53358922,
+   "count": 59,
+   "ranges": [
+    "Góry Wałbrzyskie",
+    "Góry Kamienne",
+    "Góry Sowie",
+    "Góry Bardzkie",
+    "Góry Stołowe",
+    "Masyw Ślęży"
+   ]
+  },
+  {
+   "id": "ziemia-klodzka",
+   "label": "Śnieżnik, Bystrzyckie i Orlickie",
+   "pack": "sudety",
+   "version": "2026-11-13T21:06Z",
+   "snapshot": "2026-11-12",
+   "manifest": "sudety/files.json",
+   "bytes": 70557564,
+   "count": 71,
+   "ranges": [
+    "Góry Orlickie",
+    "Góry Bystrzyckie",
+    "Masyw Śnieżnika",
+    "Góry Złote i Bialskie",
+    "Międzylesie i Králíky"
+   ]
+  },
+  {
+   "id": "jesioniki",
+   "label": "Jesioniki i Góry Opawskie",
+   "pack": "sudety",
+   "version": "2026-11-13T21:06Z",
+   "snapshot": "2026-11-12",
+   "manifest": "sudety/files.json",
+   "bytes": 43981462,
+   "count": 71,
+   "ranges": [
+    "Wysoki Jesionik",
+    "Góry Opawskie"
+   ]
+  },
+  {
+   "id": "tatry",
+   "label": "Tatry, Pieniny i Podhale",
+   "pack": "karpaty",
+   "version": "2026-11-13T21:06Z",
+   "snapshot": "2026-11-12",
+   "manifest": "karpaty/files.json",
+   "bytes": 53584716,
+   "count": 44,
+   "ranges": [
+    "Tatry Zachodnie",
+    "Tatry Wysokie",
+    "Podhale",
+    "Pieniny"
+   ]
+  },
+  {
+   "id": "beskidy-zachodnie",
+   "label": "Beskidy Zachodnie",
+   "pack": "karpaty",
+   "version": "2026-11-13T21:06Z",
+   "snapshot": "2026-11-12",
+   "manifest": "karpaty/files.json",
+   "bytes": 165571764,
+   "count": 128,
+   "ranges": [
+    "Beskid Śląski",
+    "Beskid Żywiecki",
+    "Beskid Mały",
+    "Beskid Makowski",
+    "Beskid Wyspowy",
+    "Gorce",
+    "Beskid Sądecki"
+   ]
+  },
+  {
+   "id": "beskidy-wschodnie",
+   "label": "Beskid Niski i Bieszczady",
+   "pack": "karpaty",
+   "version": "2026-11-13T21:06Z",
+   "snapshot": "2026-11-12",
+   "manifest": "karpaty/files.json",
+   "bytes": 83945148,
+   "count": 92,
+   "ranges": [
+    "Beskid Niski",
+    "Bieszczady"
+   ]
+  },
+  {
+   "id": "fatry",
+   "label": "Mała i Wielka Fatra",
+   "pack": "karpaty",
+   "version": "2026-11-13T21:06Z",
+   "snapshot": "2026-11-12",
+   "manifest": "karpaty/files.json",
+   "bytes": 56141139,
+   "count": 41,
+   "ranges": [
+    "Mała Fatra",
+    "Wielka Fatra"
+   ]
+  },
+  {
+   "id": "nizne-tatry",
+   "label": "Niżne Tatry i Słowacki Raj",
+   "pack": "karpaty",
+   "version": "2026-11-13T21:06Z",
+   "snapshot": "2026-11-12",
+   "manifest": "karpaty/files.json",
+   "bytes": 70397087,
+   "count": 59,
+   "ranges": [
+    "Niżne Tatry",
+    "Słowacki Raj"
+   ]
+  },
+  {
+   "id": "swietokrzyskie",
+   "label": "Łysogóry (Łysica)",
+   "pack": "swietokrzyskie",
+   "version": "2026-11-13T21:06Z",
+   "snapshot": "2026-11-12",
+   "manifest": "swietokrzyskie/files.json",
+   "bytes": 8232067,
+   "count": 23,
+   "ranges": [
+    "Łysogóry"
+   ]
+  }
+ ],
+ "backdrop": {
+  "pack": "tlo",
+  "version": "2026-11-13T21:06Z",
+  "snapshot": "2026-11-07",
+  "bytes": 36991484,
+  "count": 5,
+  "manifest": "tlo/files.json"
+ }
+}

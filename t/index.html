@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zdrapka – test długości linku</title>
+<style>
+  body { font: 16px/1.45 system-ui, sans-serif; margin: 0; padding: 24px 20px; color: #1f2328; background: #faf8f4; }
+  h1 { font-size: 20px; margin: 0 0 14px; }
+  .res { padding: 16px; border-radius: 14px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.1); margin-bottom: 22px; }
+  .ok { color: #16803c; font-weight: 700; } .bad { color: #c62828; font-weight: 700; }
+  button { display: block; width: 100%; height: 48px; margin: 10px 0; border: 0; border-radius: 24px; background: #f2a01e; color: #1f2328; font: 600 16px system-ui; }
+  small { color: #666; }
+</style>
+</head>
+<body>
+<h1>Test długości linku</h1>
+<div id="res" class="res" hidden></div>
+<p>Wyślij sobie każdy link przez Messengera albo WhatsAppa, potem dotknij go w rozmowie. Strona powie, czy doszedł cały.</p>
+<button data-kb="10">Udostępnij link 10 KB</button>
+<button data-kb="30">Udostępnij link 30 KB</button>
+<button data-kb="60">Udostępnij link 60 KB</button>
+<button data-kb="120">Udostępnij link 120 KB</button>
+<p><small>Dane są tylko w części linku po znaku #, nie trafiają na żaden serwer.</small></p>
+<script>
+  // a link of n KB: random base64url text (like the real, packed data), its length and a checksum at the end
+  const A = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+  const sum = (s) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36); };
+  function make(kb) {
+    const n = kb * 1024, r = new Uint8Array(n); crypto.getRandomValues(r);
+    let s = ""; for (let i = 0; i < n; i++) s += A[r[i] & 63];
+    return `T${kb}.${s}.${sum(s)}`;
+  }
+  const h = decodeURIComponent(location.hash.slice(1)), res = document.getElementById("res");
+  if (h) {
+    res.hidden = false;
+    const m = /^T(\d+)\.([A-Za-z0-9_-]*)\.([a-z0-9]+)$/.exec(h);
+    if (!m) res.innerHTML = `<span class="bad">Link ucięty albo zmieniony</span><br>doszło ${h.length.toLocaleString("pl")} znaków`;
+    else {
+      const want = +m[1] * 1024, got = m[2].length, ok = got === want && sum(m[2]) === m[3];
+      res.innerHTML = ok ? `<span class="ok">Doszedł cały: ${m[1]} KB</span>` : `<span class="bad">Uszkodzony</span><br>doszło ${got.toLocaleString("pl")} z ${want.toLocaleString("pl")} znaków`;
+    }
+  }
+  document.querySelectorAll("button[data-kb]").forEach((b) => (b.onclick = async () => {
+    const url = `${location.origin}${location.pathname}#${make(+b.dataset.kb)}`;
+    try { await navigator.share({ title: `Test ${b.dataset.kb} KB`, url }); }
+    catch (e) { if (e.name !== "AbortError") { await navigator.clipboard.writeText(url); alert("Skopiowano link (udostępnianie niedostępne)"); } }
+  }));
+</script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+maplibre-gl 5.24.0
+pmtiles 4.5.0
+firebase 12.19.0 (app, auth, firestore-lite; gstatic imports pointed at ./firebase-app.js)
