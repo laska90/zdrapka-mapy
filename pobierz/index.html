@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pobierz Zdrapkę górską (Android)</title>
+<style>
+body{margin:0;font:16px system-ui,sans-serif;color:#1d1f1e;background:#f4f4f2;display:flex;min-height:100vh;align-items:center;justify-content:center}
+main{background:#fff;border-radius:18px;padding:26px 22px;max-width:360px;width:calc(100% - 40px);box-shadow:0 2px 10px rgba(0,0,0,.06);text-align:center}
+h1{font-size:20px;margin:0 0 6px}p{color:#535856;margin:0 0 16px;font-size:14.5px}
+a.b{display:block;padding:14px;border-radius:14px;background:#5b2bd1;color:#fff;text-decoration:none;font-weight:600;margin-bottom:10px}
+a.s{display:block;padding:12px;border-radius:14px;background:#eceeed;color:#1d1f1e;text-decoration:none;font-weight:600}
+ol{text-align:left;color:#535856;font-size:14px;padding-left:20px;margin:0 0 18px}
+</style></head><body><main>
+<h1>Zdrapka górska na Androida</h1><p id="v">Najnowsza wersja</p>
+<a class="b" href="zdrapka.apk" download>Pobierz aplikację</a>
+<ol><li>Otwórz pobrany plik.</li><li>Telefon zapyta o zgodę na instalację z tego źródła: zezwól.</li><li>Zainstaluj. Kolejne wersje instalujesz tak samo, dane zostają.</li></ol>
+<a class="s" href="../app/">Albo otwórz w przeglądarce</a>
+</main><script>
+fetch("version.json").then((r) => r.json()).then((j) => { if (j.tag) document.getElementById("v").textContent = `Wersja ${j.tag.replace(/^android-/, "")}`; }).catch(() => {});
+</script></body></html>

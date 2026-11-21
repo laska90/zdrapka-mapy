@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zaproszenie – Zdrapka górska</title>
+<meta property="og:title" content="Zaproszenie do znajomych – Zdrapka górska">
+<style>
+body{margin:0;font:16px system-ui,sans-serif;color:#1d1f1e;background:#f4f4f2;display:flex;min-height:100vh;align-items:center;justify-content:center}
+main{background:#fff;border-radius:18px;padding:26px 22px;max-width:340px;width:calc(100% - 40px);box-shadow:0 2px 10px rgba(0,0,0,.06);text-align:center}
+h1{font-size:20px;margin:0 0 6px}p{color:#535856;margin:0 0 20px;font-size:14.5px}
+a.b{display:block;padding:14px;border-radius:14px;background:#5b2bd1;color:#fff;text-decoration:none;font-weight:600;margin-bottom:10px}
+a.s{display:block;padding:12px;border-radius:14px;background:#eceeed;color:#1d1f1e;text-decoration:none;font-weight:600}
+</style></head><body><main>
+<h1>Zaproszenie do znajomych</h1><p id="d">Otwórz je w Zdrapce górskiej.</p>
+<a class="b" id="open" href="#">Otwórz w Zdrapce</a>
+<a class="s" id="web" href="../app/" style="margin-bottom:10px">Otwórz w przeglądarce</a>
+<a class="s" href="../pobierz/">Nie masz Zdrapki? Pobierz (Android), potem otwórz ten link jeszcze raz</a>
+</main><script>
+// the invite's code travels in the link (#<code>): this page only hands it to the app
+const code = (location.hash.slice(1).match(/^[A-Za-z0-9]{8,32}$/) || [""])[0];
+const app = `intent://invite?c=${code}#Intent;scheme=zdrapka;package=pl.zdrapka.app;end`;
+const open = document.getElementById("open");
+open.href = /android/i.test(navigator.userAgent) ? app : `zdrapka://invite?c=${code}`;
+document.getElementById("web").href = `../app/#invite=${code}`;
+if (!/android/i.test(navigator.userAgent)) open.remove(); // (no app to open: the browser is the way)
+if (!code) { document.getElementById("d").textContent = "Ten link nie ma zaproszenia."; open.remove(); }
+else if (/android/i.test(navigator.userAgent)) setTimeout(() => { location.href = app; }, 300);
+</script></body></html>

@@ -1,0 +1,37 @@
+{
+ "v": 1,
+ "updated": "2026-11-03",
+ "about": "Zamknięcia szlaków i parki dla aplikacji Zdrapka górska, prowadzone ręcznie z komunikatów parków. Zamknięcia z tagów OpenStreetMap są w paczkach (closures.json). path: lon, lat wzdłuż szlaku (250 m w każdą stronę); from/to: co roku MM-DD; bez dat: do odwołania. seasons: w obrysie poly drogi z OSM o terminie osm są zamknięte from–to (park ma własne daty).",
+ "sources": [
+  "https://www.wroclaw.pl/dla-mieszkanca/zamknieta-czesc-szlakow-w-karkonoszach-trwa-okres-legowy-cietrzewi",
+  "https://mapa-turystyczna.pl/route/3o7jz",
+  "https://mapa-turystyczna.pl/route/1zcez",
+  "https://www.teraz.sk/slovensko/vo-vysokohorskom-prostredi-plati-od-pi/833398-clanok.html"
+ ],
+ "parks": [
+  {"id": "krnap", "name": "Karkonoski Park Narodowy", "fee": true, "dogs": "psy tylko na wybranych szlakach",
+   "poly": [[15.47, 50.80], [15.58, 50.80], [15.66, 50.79], [15.74, 50.775], [15.80, 50.75], [15.80, 50.725], [15.72, 50.73], [15.62, 50.755], [15.52, 50.765], [15.47, 50.775]]},
+  {"id": "pngs", "name": "Park Narodowy Gór Stołowych", "fee": "Szczeliniec Wielki i Błędne Skały",
+   "poly": [[16.24, 50.50], [16.36, 50.51], [16.47, 50.47], [16.45, 50.42], [16.33, 50.40], [16.24, 50.44]]}
+ ],
+ "seasons": [
+  {"name": "TANAP", "osm": "11-01|05-31", "from": "11-01", "to": "06-15", "why": "zimowe zamknięcie TANAP (nad schroniskami)",
+   "poly": [[19.55, 49.20], [19.80, 49.20], [19.93, 49.23], [20.00, 49.20], [20.08, 49.18], [20.15, 49.22], [20.25, 49.26], [20.36, 49.24], [20.36, 49.15], [20.20, 49.10], [20.00, 49.10], [19.80, 49.14], [19.55, 49.15]]}
+ ],
+ "closures": [
+  {"name": "Popradské pleso – rozdroże pod Rysami", "cols": "blue", "from": "11-01", "to": "06-15", "why": "zimowe zamknięcie TANAP (nad schroniskami)",
+   "path": [[20.0758, 49.1572], [20.0735, 49.1600], [20.0710, 49.1632]]},
+  {"name": "Mokre Rozdroże – Śnieżne Kotły – Rozdroże pod Wielkim Szyszakiem", "cols": "green", "from": "03-15", "to": "05-31", "why": "ochrona przyrody (cietrzew, sokół)",
+   "path": [[15.534, 50.7925], [15.548, 50.784], [15.558, 50.779], [15.570, 50.7785]]},
+  {"name": "Przełęcz Okraj – Czoło – Skalny Stół", "cols": "blue", "from": "03-15", "to": "05-31", "why": "ochrona przyrody (cietrzew, sokół)",
+   "path": [[15.8245, 50.7471], [15.8129, 50.7552], [15.800, 50.7545], [15.7921, 50.7529]]},
+  {"name": "Polana – Kocioł Wielkiego Stawu", "cols": "green", "from": "03-15", "to": "05-31", "why": "ochrona przyrody (cietrzew, sokół)",
+   "path": [[15.714, 50.770], [15.705, 50.765], [15.696, 50.760], [15.692, 50.756]]},
+  {"name": "Domek Myśliwski – Kocioł Małego Stawu – Samotnia", "cols": "blue", "from": "03-15", "to": "05-31", "why": "ochrona przyrody (cietrzew, sokół)", "around": "drogą transportową od Domku Myśliwskiego",
+   "path": [[15.725, 50.766], [15.715, 50.757], [15.7027, 50.749]]},
+  {"name": "Rozdroże pod Wielkim Szyszakiem – Mokre Rozdroże", "cols": "green", "why": "remont (od 08.11.2025)",
+   "path": [[15.570, 50.7785], [15.558, 50.779], [15.548, 50.784], [15.534, 50.7925]]},
+  {"name": "Szklarska Poręba Huta – Rozdroże pod Kamieńczykiem", "cols": "red", "why": "prace budowlane (od 16.06.2026)",
+   "path": [[15.5071, 50.8245], [15.503, 50.820], [15.4985, 50.816]]}
+ ]
+}

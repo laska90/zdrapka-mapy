@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plan trasy – Zdrapka górska</title>
+<meta property="og:title" content="Plan trasy – Zdrapka górska">
+<style>
+body{margin:0;font:16px system-ui,sans-serif;color:#1d1f1e;background:#f4f4f2;display:flex;min-height:100vh;align-items:center;justify-content:center}
+main{background:#fff;border-radius:18px;padding:26px 22px;max-width:340px;width:calc(100% - 40px);box-shadow:0 2px 10px rgba(0,0,0,.06);text-align:center}
+h1{font-size:20px;margin:0 0 6px}p{color:#535856;margin:0 0 20px;font-size:14.5px}
+a.b{display:block;padding:14px;border-radius:14px;background:#5b2bd1;color:#fff;text-decoration:none;font-weight:600;margin-bottom:10px}
+a.s{display:block;padding:12px;border-radius:14px;background:#eceeed;color:#1d1f1e;text-decoration:none;font-weight:600}
+</style></head><body><main>
+<h1 id="t">Plan trasy</h1><p id="d">Otwórz go w Zdrapce górskiej.</p>
+<a class="b" id="open" href="#">Otwórz w Zdrapce</a>
+<a class="s" id="web" href="../app/" style="margin-bottom:10px">Otwórz w przeglądarce</a>
+<a class="s" href="../pobierz/">Nie masz Zdrapki? Pobierz (Android)</a>
+</main><script>
+// the plan travels in the link itself (#1.<points>.<name>): this page only hands it to the app
+const tok = location.hash.slice(1);
+const B = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+try {
+  const n = tok.split(".")[2];
+  if (n) { const out = []; let v = 0, k = 0; for (const ch of n) { v = (v << 6) | B.indexOf(ch); k += 6; if (k >= 8) { k -= 8; out.push((v >> k) & 255); } } document.getElementById("t").textContent = new TextDecoder().decode(new Uint8Array(out)); }
+} catch (e) { /* the default title */ }
+const app = `intent://plan?d=${tok}#Intent;scheme=zdrapka;package=pl.zdrapka.app;end`;
+const open = document.getElementById("open");
+open.href = /android/i.test(navigator.userAgent) ? app : `zdrapka://plan?d=${tok}`;
+document.getElementById("web").href = `../app/#plan=${tok}`;
+if (!/android/i.test(navigator.userAgent)) open.remove(); // (no app to open: the browser is the way)
+if (!tok) { document.getElementById("d").textContent = "Ten link nie ma planu."; open.remove(); }
+else if (/android/i.test(navigator.userAgent)) setTimeout(() => { location.href = app; }, 300);
+</script></body></html>

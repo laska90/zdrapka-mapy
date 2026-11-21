@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<title>intervals.icu – Zdrapka górska</title>
+<style>
+body{margin:0;font:16px system-ui,sans-serif;color:#1d1f1e;background:#f4f4f2;display:flex;min-height:100vh;align-items:center;justify-content:center}
+main{background:#fff;border-radius:18px;padding:26px 22px;max-width:340px;width:calc(100% - 40px);box-shadow:0 2px 10px rgba(0,0,0,.06);text-align:center}
+h1{font-size:20px;margin:0 0 6px}p{color:#535856;margin:0 0 20px;font-size:14.5px}
+a.b{display:block;padding:14px;border-radius:14px;background:#5b2bd1;color:#fff;text-decoration:none;font-weight:600}
+</style></head><body><main>
+<h1 id="t">intervals.icu</h1><p id="d">Wracam do Zdrapki.</p>
+<a class="b" id="open" href="#">Wróć do Zdrapki</a>
+</main><script>
+// OAuth return page (redirect URI registered at intervals.icu). It stores nothing and sends nothing anywhere:
+// it only hands the one-time code back to whoever started the sign-in. The app exchanges the code itself
+// (PKCE, no client secret), so the code alone is useless to anyone else.
+// state = "a.<nonce>" (Android app) or "w.<nonce>" (the web app at ../app/).
+const q = new URLSearchParams(location.search);
+const code = q.get("code") || "", state = q.get("state") || "", err = q.get("error") || "";
+history.replaceState(null, "", location.pathname); // (the code leaves the address bar and history)
+const tail = new URLSearchParams(err ? { error: err, state } : { code, state }).toString();
+const open = document.getElementById("open");
+if (!state || (!code && !err)) {
+  document.getElementById("d").textContent = "Ten link nie pochodzi z logowania w Zdrapce.";
+  open.remove();
+} else {
+  if (err) document.getElementById("t").textContent = "Nie połączono";
+  const target = state.startsWith("w.")
+    ? `../app/#icu=${encodeURIComponent(tail)}`
+    : /android/i.test(navigator.userAgent)
+      ? `intent://icu?${tail}#Intent;scheme=zdrapka;package=pl.zdrapka.app;end`
+      : `zdrapka://icu?${tail}`;
+  open.href = target;
+  setTimeout(() => { location.href = target; }, 200);
+}
+</script></body></html>

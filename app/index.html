@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Zdrapka górska: stara mapa, którą odkrywasz, chodząc po górach. Ślady z Garmina zostają na Twoim urządzeniu.">
+<title>Zdrapka górska</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon-192.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="vendor/maplibre-gl.css">
+<link rel="stylesheet" href="app/style.css">
+</head>
+<body>
+<div id="gl"></div>
+<canvas id="map"></canvas>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" style="fill:none;stroke:#fff;stroke-width:2"/><circle cx="12" cy="12" r="5.2" style="fill:currentColor;stroke:none"/></symbol>
+  <symbol id="i-anchor" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="2"/><path d="M12 7.5V20M8 11h8M5 14a7 6 0 0 0 14 0"/></symbol>
+  <symbol id="i-replay3d" viewBox="0 0 24 24"><path d="M3 19.5 9 9l3.5 5.5L15 11l6 8.5Z" style="stroke-linejoin:round"/><path d="M10.5 3.8v5.4l4.2-2.7Z" style="fill:currentColor;stroke-linejoin:round"/></symbol>
+  <symbol id="i-navradar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6.2 14.6 15.2 12 13.6 9.4 15.2Z" style="fill:currentColor;stroke-linejoin:round"/></symbol>
+  <symbol id="i-peakcam" viewBox="0 0 24 24"><path d="M4 7.5h3l1.6-2.2h6.8L17 7.5h3a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8.5a1 1 0 0 1 1-1Z"/><path d="m6.5 16.5 3.6-4.6 2.2 2.6 1.6-1.8 3.6 3.8"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 4 3 9l9 5 9-5-9-5Z"/><path d="m3 13.5 9 5 9-5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-sync" viewBox="0 0 24 24"><path d="M19 8a7.5 7.5 0 0 0-13.4-1.6M5 4v3.5h3.5"/><path d="M5 16a7.5 7.5 0 0 0 13.4 1.6M19 20v-3.5h-3.5"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5.5 8.5 12l6.5 6.5"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></symbol>
+  <symbol id="i-loc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6.5"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/><circle cx="12" cy="12" r="2.6" style="fill: var(--dot, none)"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.8-4.8"/></symbol>
+  <symbol id="i-nav" viewBox="0 0 24 24"><path d="M20 4 4 11l7 2 2 7 7-16Z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8.5 5.5v13l10-6.5-10-6.5Z" style="fill: currentColor"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8.5 5.5v13M15.5 5.5v13"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.6 8.4-2.1 5.1-5.1 2.1 2.1-5.1Z"/></symbol>
+  <symbol id="i-train" viewBox="0 0 24 24"><rect x="5.5" y="3" width="13" height="13.5" rx="3"/><path d="M5.5 10.5h13M9 13.5h.01M15 13.5h.01M8.5 16.5 6.5 20.5M15.5 16.5l2 4"/></symbol>
+  <symbol id="i-wx" viewBox="0 0 24 24"><circle cx="8.5" cy="8.5" r="3.2"/><path d="M8.5 2.2v1.4M2.2 8.5h1.4M4 4l1 1M13 4l-1 1M7 19.5h9.5a3.5 3.5 0 0 0 .3-7 5 5 0 0 0-9.6 1.2A2.9 2.9 0 0 0 7 19.5Z"/></symbol>
+  <symbol id="i-route" viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 18h6.5a3.5 3.5 0 0 0 0-7h-5a3.5 3.5 0 0 1 0-7H16"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3.5M7.5 8 12 3.5 16.5 8"/><path d="M5 12v7.5h14V12"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 7.5 4.5 12 9 16.5"/><path d="M5 12h9.5a5 5 0 0 1 0 10H12"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></symbol>
+  <symbol id="i-unlock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 6.7-1.4"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.6" style="fill: currentColor"/><circle cx="12" cy="12" r="1.6" style="fill: currentColor"/><circle cx="18.5" cy="12" r="1.6" style="fill: currentColor"/></symbol>
+  <symbol id="i-start" viewBox="0 0 24 24"><path d="M7.5 20.5v-17"/><path d="M7.5 3.5 18 7.5 7.5 11.5Z" style="fill: currentColor"/></symbol>
+  <symbol id="i-finish" viewBox="0 0 24 24"><path d="M6.5 20.5v-17"/><path d="M6.5 3.5h12v9h-12Z" style="stroke-width: 1.4"/><path d="M6.5 3.5h3v3h-3ZM12.5 3.5h3v3h-3ZM9.5 6.5h3v3h-3ZM15.5 6.5h3v3h-3ZM6.5 9.5h3v3h-3ZM12.5 9.5h3v3h-3Z" style="fill: currentColor; stroke: none"/></symbol>
+  <symbol id="i-ring" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" style="opacity:.35"/><path d="M12 4a8 8 0 0 1 7.6 10.5"/></symbol>
+  <symbol id="i-peaks" viewBox="0 0 24 24"><path d="m2.5 19 6.5-11 4 6.5 2.5-4 6 8.5Z"/></symbol>
+  <symbol id="i-boot" viewBox="0 0 24 24"><path d="M5 19c2-6 1-9 4-13M12 20c1-4 4-6 4-10M18 19c.5-2 1.5-3 2.5-4"/><circle cx="9" cy="5" r="1.4" style="fill: currentColor"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.3"/></symbol>
+  <symbol id="i-steps" viewBox="0 0 24 24"><circle cx="5.5" cy="18.5" r="2.2"/><path d="M8.6 17.4c3.6-1 2.2-5 5.4-6s4.2-2.6 4.6-5" stroke-dasharray="0 3.6"/><path d="M18.5 3.5v4.5"/><path d="M18.5 3.5h3l-1 1.4 1 1.4h-3" style="fill: currentColor"/></symbol>
+  <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M7 3.5h10a1 1 0 0 1 1 1v16l-6-4-6 4v-16a1 1 0 0 1 1-1Z"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13l-5.5 2-6-2-5.5 2Z"/><path d="M9 4.5v13M15 6.5v13"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7.5h9M17 7.5h3M4 16.5h3M11 16.5h9"/><circle cx="15" cy="7.5" r="2"/><circle cx="9" cy="16.5" r="2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-medal" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.5"/><path d="m9 13.8-1.6 6.7 4.6-2.4 4.6 2.4-1.6-6.7"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M13.5 3.5H7A1.5 1.5 0 0 0 5.5 5v14A1.5 1.5 0 0 0 7 20.5h10a1.5 1.5 0 0 0 1.5-1.5V8.5Z"/><path d="M13.5 3.5v5h5M12 11.5v6M9 14.5h6"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-cut" viewBox="0 0 24 24"><path d="M5 19c0-9 4-14 14-14" style="stroke-dasharray: 2 2.6; opacity: .55"/><path d="M5.5 18.5 18 6M11 6h7v7"/></symbol><symbol id="i-stop" viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="2"/></symbol><symbol id="i-x" viewBox="0 0 24 24"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></symbol>
+</svg>
+
+<div class="scrim" aria-hidden="true"></div>
+<header class="top">
+  <div class="search" role="search">
+    <button id="menubtn" class="sbtn" aria-label="Menu" aria-expanded="false"><svg><use href="#i-menu"/></svg></button>
+    <button id="qback" class="sbtn" aria-label="Wróć"><svg><use href="#i-back"/></svg></button>
+    <i class="qsep"></i>
+    <button id="qbtn" class="sbtn" aria-label="Szukaj" aria-controls="results"><svg><use href="#i-search"/></svg></button>
+    <input id="q" type="search" placeholder="Szukaj" autocomplete="off" spellcheck="false" enterkeyhint="search" aria-label="Szukaj" aria-controls="results">
+    <button id="qx" class="sbtn" aria-label="Wyczyść" hidden><svg><use href="#i-x"/></svg></button>
+    <button id="chip" class="ringbtn" aria-label="Postęp">
+      <svg class="ring" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15"/><circle id="ringv" cx="18" cy="18" r="15" pathLength="100" stroke-dasharray="0 100"/></svg>
+      <span id="chipsub">0%</span>
+    </button>
+  </div>
+  <div id="results" class="card results" role="listbox" aria-label="Wyniki wyszukiwania" hidden></div>
+  <div class="tr">
+    <button id="layersbtn" class="ctl sq" aria-label="Widok mapy" aria-expanded="false"><svg><use href="#i-layers"/></svg></button>
+    <button id="peakcambtn" class="ctl sq" aria-label="Szczyty w aparacie"><svg><use href="#i-peakcam"/></svg></button>
+    <button id="navradarbtn" class="ctl sq" aria-label="Kompas trasy" hidden><svg><use href="#i-navradar"/></svg></button>
+    <button id="compass" class="ctl sq compass" aria-label="Północ u góry" title="Północ u góry" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path class="cn" d="M12 2.8 15.2 12H8.8Z"/><path class="cs" d="M12 21.2 8.8 12h6.4Z"/><circle cx="12" cy="12" r="1.3"/></svg></button>
+    <div id="modes" class="card pop" hidden>
+      <div id="lyView" class="vtiles" role="radiogroup" aria-label="Widok mapy"><button data-m="fog" role="radio"><span class="vt"><svg viewBox="0 0 64 64" aria-hidden="true"><rect style="fill:#e9ebe4" width="64" height="64"/><path style="fill:#c6e0a4" d="M30 6c14 0 30 8 30 22s-8 30-24 30S4 46 6 30 18 6 30 6Z"/><path style="fill:none;stroke:#cfd2ca;stroke-width:1.2" d="M-4 52c16-6 22 4 38-2s22-14 38-10"/><path style="fill:none;stroke:#b9a6ef;stroke-width:7;stroke-linecap:round" d="M14 62C22 44 30 34 40 24"/><path style="fill:none;stroke:#e2342b;stroke-width:2.4;stroke-dasharray:4 3" d="M8 74C20 50 32 32 52 10L66-4"/></svg></span><span>Zdrapka</span></button><button data-m="map" role="radio"><span class="vt"><svg viewBox="0 0 64 64" aria-hidden="true"><rect style="fill:#cfe5ad" width="64" height="64"/><path style="fill:none;stroke:#b4cf90;stroke-width:1.2" d="M-4 52c16-6 22 4 38-2s22-14 38-10"/><path style="fill:none;stroke:#e2342b;stroke-width:2.4;stroke-dasharray:4 3" d="M8 74C20 50 32 32 52 10L66-4"/></svg></span><span>Mapa</span></button></div>
+      <button id="lySlope" class="lyopt" role="switch" aria-checked="false"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="M3 24C9 20 11 13 15 9s7-5 10-6" style="fill:none;stroke:#f08a24;stroke-width:6;stroke-linecap:round"/><path d="M11 15c2-3 3-5 4-6" style="fill:none;stroke:#d42a1e;stroke-width:6;stroke-linecap:round"/><path d="M3 24C9 20 11 13 15 9s7-5 10-6" style="fill:none;stroke:#1f5fd0;stroke-width:2;stroke-dasharray:3 2"/></svg><b>Nachylenie</b><i class="tg"></i></button>
+      <div id="lyPeople" hidden><button id="lyPplBtn" class="lyopt" aria-expanded="false"><svg viewBox="0 0 28 28" aria-hidden="true"><circle cx="9.5" cy="14" r="6.5" fill="#6a3df0"/><circle cx="18.5" cy="14" r="6.5" fill="#d63a8a" opacity=".9"/></svg><b>Znajomi</b><span class="lydots"></span><svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button><div class="lyplist" hidden></div></div>
+    </div>
+  </div>
+</header>
+
+<div class="fab">
+  <button id="gpsbtn" class="ctl round gps" aria-label="Moja pozycja" title="Moja pozycja (przytrzymaj: GPS włącz / wyłącz)"><svg class="gdot" viewBox="0 0 24 24" aria-hidden="true"><circle class="gh" cx="12" cy="12" r="10.5"/><circle class="gr" cx="12" cy="12" r="7.6"/><circle class="gc" cx="12" cy="12" r="5.2"/></svg></button>
+</div>
+
+<section id="sheet" class="sheet" data-state="peek" aria-label="Postęp">
+  <div id="grab" class="grab" role="button" aria-label="Rozwiń" tabindex="0"><span></span></div>
+  <div id="tip" class="tip" hidden></div>
+  <div id="peek" class="peek"></div>
+</section>
+
+<!-- the side panel: everything that is mine (progress, ranges, outings, places), adding outings, settings -->
+<div id="drawer" class="drawer" hidden>
+  <div class="dscrim"></div>
+  <aside class="dpanel" role="dialog" aria-modal="true" aria-labelledby="dtitle">
+    <header class="dhead">
+      <button id="dback" class="iconbtn" aria-label="Wstecz" hidden><svg><use href="#i-back"/></svg></button>
+      <h2 id="dtitle">Zdrapka górska</h2>
+      <button id="dx" class="iconbtn" aria-label="Zamknij"><svg><use href="#i-x"/></svg></button>
+    </header>
+    <div class="dbody">
+      <nav id="dhome" class="dhome">
+        <button class="dsum" data-p="progress" id="dsum"></button>
+        <div class="dranges" id="dranges"></div>
+        <button class="dl" data-p="outings"><svg><use href="#i-steps"/></svg><span id="obtn">Wyjścia</span><em class="cnt" id="ocnt"></em><svg class="chev"><use href="#i-chev"/></svg></button>
+        <button class="dl" data-p="journal"><svg><use href="#i-pin"/></svg><span id="jbtn">Odkryte miejsca</span><em class="cnt" id="jcnt"></em><svg class="chev"><use href="#i-chev"/></svg></button>
+        <button class="dl" data-p="friendsp"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:1.8"><circle cx="9" cy="9" r="3.2"/><path d="M3.5 19c.6-3 2.8-4.6 5.5-4.6s4.9 1.6 5.5 4.6"/><circle cx="17" cy="9.5" r="2.6"/><path d="M15.5 14.6c2.6-.3 4.6 1.2 5 4.4"/></svg><span>Znajomi</span><em class="cnt" id="fcnt"></em><svg class="chev"><use href="#i-chev"/></svg></button>
+        <button class="dl" id="plansbtn" data-p="plansp"><svg><use href="#i-bookmark"/></svg><span>Plany</span><svg class="chev"><use href="#i-chev"/></svg></button>
+        <button id="maprow" class="dl" hidden><svg><use href="#i-map"/></svg><span>Mapy</span><em class="cnt" id="mcnt"></em><svg class="chev"><use href="#i-chev"/></svg></button>
+        <button class="dl" data-p="legendp"><svg><use href="#i-layers"/></svg><span>Legenda</span><svg class="chev"><use href="#i-chev"/></svg></button>
+        <button id="sbtn" class="dl" data-p="setp"><svg><use href="#i-sliders"/></svg><span>Ustawienia</span><svg class="chev"><use href="#i-chev"/></svg></button>
+        <a id="apkrow" class="dl" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:1.8"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14"/></svg><span>Aplikacja na Androida</span><svg class="chev"><use href="#i-chev"/></svg></a>
+        <div class="dsep"></div>
+        <button class="dl sosrow" id="sosbtn"><svg viewBox="0 0 24 24"><path d="M12 3 2.6 20h18.8Z" style="fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round"/><path d="M12 9.5v5M12 16.8v.4" style="stroke:currentColor;stroke-width:2.2;stroke-linecap:round"/></svg><span>Wezwij pomoc</span><svg class="chev"><use href="#i-chev"/></svg></button>
+        <div class="dsep"></div>
+        <button id="acctrow" class="dl acfoot" data-p="kontop"><svg class="acic" viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:1.8"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.5 20c.8-3.6 3.8-5.6 7.5-5.6s6.7 2 7.5 5.6"/></svg><i class="acav" hidden></i><span class="acn">Zaloguj</span><svg class="chev"><use href="#i-chev"/></svg></button>
+      </nav>
+      <div id="progress" class="dpage" hidden></div>
+      <div id="outings" class="dpage outings" hidden>
+        <div class="oacts"><label class="btn"><svg><use href="#i-plus"/></svg> Z plików<input id="files" type="file" multiple accept=".fit,.gpx,.tcx,.gz,.zip,application/zip,application/gzip" hidden></label><button id="drawbtn" class="btn"><svg><use href="#i-route"/></svg> Narysuj</button><button id="syncbtn" class="btn" hidden><svg><use href="#i-sync"/></svg> Garmin</button></div>
+        <div id="elestatus" class="muted small"></div><button id="elefill" class="btn" hidden>Uzupełnij wysokości z intervals.icu</button>
+        <div id="olist"></div>
+      </div>
+      <div id="journal" class="dpage journal" hidden></div>
+      <div id="ranges" class="dpage ranges" hidden></div>
+      <div id="allp" class="dpage allp" hidden></div>
+      <div id="legendp" class="dpage" hidden><div class="popleg" id="poplegend"></div></div>
+      <div id="mapsp" class="dpage mapsp" hidden></div>
+      <div id="plansp" class="dpage plansp" hidden></div>
+      <div id="friendsp" class="dpage friendsp" hidden></div>
+      <div id="friendp" class="dpage friendp" hidden></div>
+      <div id="kontop" class="dpage kontop" hidden></div>
+      <div id="setp" class="dpage setp" hidden>
+        <h5 class="sec">Konto i dane</h5>
+        <div class="sgrp">
+          <button class="srow" data-sp="kontop"><span class="sic" style="--c:#5b2bd1"><svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.5 20c.8-3.6 3.8-5.6 7.5-5.6s6.7 2 7.5 5.6"/></svg></span><span class="st"><b id="srAcct">Konto</b><small id="srAcctS"></small></span><svg class="chev"><use href="#i-chev"/></svg></button>
+          <button class="srow" data-sp="setbkp"><span class="sic" style="--c:#2e7d32"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14"/></svg></span><span class="st"><b>Kopia zapasowa</b><small id="srBkp"></small></span><svg class="chev"><use href="#i-chev"/></svg></button>
+        </div>
+        <h5 class="sec">Wyjścia</h5>
+        <div class="sgrp">
+          <button class="srow" data-sp="setgar" id="icurow"><span class="sic" style="--c:#1a73e8"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><path d="M12 8v4l2.6 2"/></svg></span><span class="st"><b>Garmin</b><small id="srGar"></small></span><svg class="chev"><use href="#i-chev"/></svg></button>
+        </div>
+        <h5 class="sec">Wycieczki</h5>
+        <div class="sgrp" id="triprow">
+          <label class="srow"><span class="sic" style="--c:#f0a01e"><svg viewBox="0 0 24 24"><path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 1.5H5z"/><path d="M10 20.5h4"/></svg></span><span class="st"><b>Przypomnienie</b><small id="srTrip"></small></span><input id="tripnote" class="sw" type="checkbox" role="switch"></label>
+          <div class="srow swhen" id="tripwhen"><div class="sdays" id="tripday"><button data-day="1">Pn</button><button data-day="2">Wt</button><button data-day="3">Śr</button><button data-day="4">Cz</button><button data-day="5">Pt</button><button data-day="6">Sb</button><button data-day="0">Nd</button></div><select id="triptime" class="field stime" aria-label="Godzina"><option>05:00</option><option>05:30</option><option>06:00</option><option>06:30</option><option>07:00</option><option>07:30</option><option>08:00</option><option>08:30</option><option>09:00</option><option>09:30</option><option>10:00</option><option>10:30</option><option>11:00</option><option>11:30</option><option>12:00</option><option>12:30</option><option>13:00</option><option>13:30</option><option>14:00</option><option>14:30</option><option>15:00</option><option>15:30</option><option>16:00</option><option>16:30</option><option>17:00</option><option>17:30</option><option>18:00</option><option>18:30</option><option>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option><option>22:00</option><option>22:30</option></select></div>
+          <button class="srow" data-sp="settrain"><span class="sic" style="--c:#455a64"><svg viewBox="0 0 24 24"><rect x="6" y="3.5" width="12" height="13" rx="3"/><path d="M6 11h12M9 20l1.5-3.5M15 20l-1.5-3.5"/><circle cx="9.5" cy="14" r=".6"/><circle cx="14.5" cy="14" r=".6"/></svg></span><span class="st"><b>Pociąg do domu</b><small id="srTrain"></small></span><svg class="chev"><use href="#i-chev"/></svg></button>
+        </div>
+        <h5 class="sec" id="srMapsH">Mapa</h5>
+        <div class="sgrp" id="srMapsG">
+          <button class="srow" data-sp="mapsp"><span class="sic" style="--c:#7a52e6"><svg viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13l-5.5 2-6-2-5.5 2z"/><path d="M9 4.5v13M15 6.5v13"/></svg></span><span class="st"><b>Mapy w telefonie</b><small id="srMaps"></small></span><svg class="chev"><use href="#i-chev"/></svg></button>
+        </div>
+        <h5 class="sec">Pomoc</h5>
+        <div class="sgrp">
+          <button class="srow" data-sp="setbench"><span class="sic" style="--c:#00897b"><svg viewBox="0 0 24 24"><path d="M13 3 6 13.5h5L10 21l7.5-11h-5z"/></svg></span><span class="st"><b>Test płynności</b><small id="srBench"></small></span><svg class="chev"><use href="#i-chev"/></svg></button>
+          <button class="srow" data-sp="setdiag"><span class="sic" style="--c:#757575"><svg viewBox="0 0 24 24"><path d="M4 12h3l2-5 3.5 10 2.5-6 1.5 3H20"/></svg></span><span class="st"><b>Raport diagnostyczny</b></span><svg class="chev"><use href="#i-chev"/></svg></button>
+          <button class="srow" data-sp="setabout"><span class="sic" style="--c:#9e9e9e"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8v.4"/></svg></span><span class="st"><b>O aplikacji</b><small id="srAbout"></small></span><svg class="chev"><use href="#i-chev"/></svg></button>
+        </div>
+      </div>
+      <div id="setgar" class="dpage setsub" hidden>
+        <div class="sgrp">
+          <div class="shero"><span class="sic" style="--c:#1a73e8"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><path d="M12 8v4l2.6 2"/></svg></span><span class="st"><b id="gchead">Garmin Connect</b><small id="gcstatus"></small></span></div>
+          <div id="gcform"><input id="gckey" class="field" type="password" placeholder="Klucz Personal API" autocomplete="off" spellcheck="false">
+            <div class="seg" id="gcvalid"><button data-d="30">30 dni</button><button data-d="90">90 dni</button><button data-d="180">180 dni</button><button data-d="365" class="on">1 rok</button></div></div>
+          <div class="sbtns"><button id="gcsave" class="btn primary">Połącz</button><button id="gcsync" class="btn" hidden>Sprawdź teraz</button><a id="gchelp" class="btn" href="https://connect.garmin.com/app/settings/personalApiToken" target="_blank" rel="noopener">Załóż klucz</a><button id="gcnew" class="btn" hidden>Nowy klucz</button><button id="gcoff" class="btn sdanger" hidden>Odłącz</button></div>
+        </div>
+        <div class="sgrp" id="icugrp">
+          <div class="shero"><span class="st"><b id="icuhead">intervals.icu</b><small id="icustatus"></small></span></div>
+          <div id="icuform"><input id="icukey" class="field" type="password" placeholder="Klucz API intervals.icu" autocomplete="off" spellcheck="false"></div>
+          <div class="sbtns"><button id="icusave" class="btn primary">Połącz</button><button id="icusync" class="btn" hidden>Sprawdź teraz</button><a id="icuhelp" class="btn" href="https://intervals.icu/settings" target="_blank" rel="noopener">Skąd wziąć klucz?</a><button id="icuoff" class="btn sdanger" hidden>Odłącz</button></div>
+        </div>
+      </div>
+      <div id="setbkp" class="dpage setsub" hidden>
+        <h5 class="sec">W telefonie</h5>
+        <div class="sgrp">
+          <div id="bkpauto" class="srow" hidden><span class="st"><b>Co tydzień do folderu</b><small id="bkpautost"></small></span><button id="bkpdir" class="btn">Kopia co tydzień</button></div>
+          <button class="srow" id="bkpsave"><span class="st"><b>Zapisz teraz</b></span><svg class="chev"><use href="#i-chev"/></svg></button>
+          <label class="srow" for="bkpfile"><span class="st"><b>Wczytaj z pliku</b></span><svg class="chev"><use href="#i-chev"/></svg></label><input id="friendfile" type="file" accept=".zdrapka,.json,.zip,.gpx,.fit,.tcx,application/json,application/zip,application/octet-stream" multiple hidden><input id="bkpfile" type="file" accept=".json,application/json" hidden>
+        </div>
+        <h5 class="sec">Na serwerze</h5>
+        <div class="sgrp">
+          <button class="srow" data-sp="kontop"><span class="st"><b>Kopia na serwerze</b><small id="srCloud"></small></span><svg class="chev"><use href="#i-chev"/></svg></button>
+        </div>
+        <div class="sgrp sbottom"><button id="clearall" class="srow sdanger">Usuń wszystkie wyjścia</button></div>
+      </div>
+      <div id="settrain" class="dpage setsub" hidden>
+        <div class="sgrp" id="homerow">
+          <div class="srow sfield"><span class="st"><small>Stacja domowa</small><span class="stpick"><input id="home1" class="field" placeholder="Wpisz stację" autocomplete="off" spellcheck="false"><span class="stsug" id="home1s" hidden></span></span></span></div>
+          <div class="srow sfield"><span class="st"><small>Zapasowa</small><span class="stpick"><input id="home2" class="field" placeholder="brak" autocomplete="off" spellcheck="false"><span class="stsug" id="home2s" hidden></span></span></span></div>
+        </div>
+        <div id="homestatus" class="shint"></div>
+      </div>
+      <div id="setbench" class="dpage setsub" hidden>
+        <div class="sgrp"><div class="sbtns"><button id="benchquick" class="btn primary">Szybki · 1 min</button><button id="benchfull" class="btn">Pełny · 5 min</button><button id="benchab" class="btn">Wątki kafli: 1 / 5 · 2 min</button><button id="benchlayers" class="btn">Co obciąża mapę · 3 min</button></div></div>
+        <div class="sgrp"><label class="srow"><span class="st"><b>Wygładzanie dotyku</b><small id="rsstat"></small></span><input id="rsswitch" class="sw" type="checkbox"></label></div>
+        <div id="benchres" class="benchres" hidden></div>
+      </div>
+      <div id="setdiag" class="dpage setsub" hidden>
+        <div class="sgrp"><div class="sbtns"><button id="diagrun" class="btn primary">Zbierz raport</button><button id="diagcopy" class="btn">Kopiuj raport</button></div></div>
+        <pre id="diag" class="diag" hidden></pre>
+      </div>
+      <div id="setabout" class="dpage setsub" hidden>
+        <div class="sgrp"><div class="srow"><span class="st"><small>Wersja</small><b id="aboutver">-</b></span></div><div class="srow"><span class="st"><small>Dane mapy</small><b id="aboutmap">-</b></span></div></div>
+        <h5 class="sec">Źródła</h5>
+        <div class="shint" id="about"></div>
+      </div>
+    </div>
+  </aside>
+</div>
+<div id="walked" class="overlay settings" hidden>
+  <div class="panel wide" role="dialog" aria-label="Dodaj do wyjść">
+    <div class="phead"><h2 id="wkh">Nowe wyjście</h2><button id="wkx" class="iconbtn" aria-label="Zamknij"><svg><use href="#i-x"/></svg></button></div>
+    <label class="row">Data<input id="wkdate" class="field" type="date"></label>
+    <label class="row">Czas<input id="wktime" class="field" type="text" inputmode="numeric" placeholder="h:mm" maxlength="5"></label>
+    <button id="wkok" class="btn primary wide">Dodaj</button>
+  </div>
+</div>
+<section id="peakcam" class="peakcam" hidden aria-label="Szczyty w aparacie">
+  <video id="pcvideo" playsinline muted hidden></video>
+  <img id="pcphoto" alt="" hidden>
+  <canvas id="pccanvas"></canvas>
+  <div class="pcbar">
+    <button id="pcx" class="pcbtn" aria-label="Zamknij"><svg><use href="#i-x"/></svg></button>
+    <div class="pcmid"><b id="pchead"></b><span id="pcwhere"></span></div>
+    <button id="pcoff" class="pcpill" hidden aria-label="Korekta kierunku (stuknij: z powrotem do kompasu)"><svg class="pcanch"><use href="#i-anchor"/></svg><span id="pcofft"></span></button>
+    <button id="pcrec" class="pcbtn pcrec" hidden aria-label="Zapisz przypadek testowy (przytrzymaj: wyślij zapisane)"><svg><use href="#i-rec"/></svg><span id="pcrecn"></span></button>
+  </div>
+  <p id="pcstatus" class="pcstatus" hidden></p>
+  <div id="pccard" class="pccard" hidden>
+    <div class="pchd"><div><b id="pcname"></b><span id="pcsub"></span><span id="pcsum"></span></div><button id="pccx" class="iconbtn" aria-label="Zamknij"><svg><use href="#i-x"/></svg></button></div>
+    <div id="pcway"></div>
+    <p id="pcnote" class="pcnote" hidden></p>
+    <button id="pcplan" class="btn primary wide" hidden>Zaplanuj trasę</button>
+  </div>
+</section>
+<section id="navradar" class="peakcam navradar" hidden aria-label="Kompas trasy">
+  <canvas id="nrcanvas"></canvas>
+  <div class="pcbar">
+    <button id="nrx" class="pcbtn" aria-label="Zamknij"><svg><use href="#i-x"/></svg></button>
+    <div class="pcmid"><b id="nrhead"></b><span id="nrsub"></span></div>
+    <button id="nrpill" class="pcpill" hidden aria-label="Wróć do prowadzenia"></button>
+  </div>
+  <div id="nrtrail" class="nrtrail"></div>
+  <button id="nr3d" class="pcpill nr3d" hidden aria-label="Teren 3D albo płasko">3D</button>
+  <div id="nroff" class="nroff" hidden><b id="nrofft"></b><span id="nroffs"></span></div>
+  <div id="nrcard" class="pccard nrcard">
+    <b id="nra"></b>
+    <span id="nrb"></span>
+    <div class="nrgoal"><b id="nrgoal"></b><span id="nrgoalv"></span></div>
+    <div id="nrclimb" class="nrclimb"></div>
+  </div>
+</section>
+<section id="replay" class="peakcam navradar replay" hidden aria-label="Replay 3D">
+  <canvas id="rpcanvas"></canvas>
+  <div class="pcbar">
+    <button id="rpx" class="pcbtn" aria-label="Zamknij"><svg><use href="#i-x"/></svg></button>
+    <div class="pcmid"><b id="rpname"></b><span id="rpdate"></span></div>
+    <button id="rpcam" class="pcpill" hidden aria-label="Kamera z powrotem sama">↺ kamera</button>
+  </div>
+  <p id="rpstatus" class="pcstatus" hidden></p>
+  <div id="rpsum" class="rpsum" hidden>
+    <b class="rpsumt">Podsumowanie</b>
+    <div id="rpsumg" class="rpsumg"></div>
+    <p id="rpsump" class="rpsump"></p>
+    <button id="rpagain" class="btn">Obejrzyj jeszcze raz</button>
+  </div>
+  <div id="rpcard" class="pccard rpcard">
+    <div class="rprow"><b id="rpclock"></b><span id="rpout"></span><span class="rpsp"></span><span id="rpkm"></span></div>
+    <div class="rprow rpfig"><span id="rpup" class="rpup"></span><span id="rpdown" class="rpdown"></span><span class="rpsp"></span><span id="rppace"></span></div>
+    <div id="rpprof" class="rpprof"></div>
+    <div class="rpctl"><button id="rpback" class="iconbtn" aria-label="Od początku"><svg><use href="#i-replay3d"/></svg></button><button id="rpplay" class="rpplay" aria-label="Odtwórz"><svg><use href="#i-play"/></svg></button><button id="rpspeed" class="pcpill rpspeed">×1</button></div>
+  </div>
+</section>
+<div id="sos" class="overlay sos" hidden>
+  <div class="panel wide" role="dialog" aria-label="Wezwij pomoc">
+    <div class="phead"><h2>Wezwij pomoc</h2><button id="sosx" class="iconbtn" aria-label="Zamknij"><svg><use href="#i-x"/></svg></button></div>
+    <div id="sosbody"></div>
+  </div>
+</div>
+<div id="year" class="yearov" hidden role="dialog" aria-label="Twój rok">
+  <div id="ydots" class="ystory"></div>
+  <div class="yhead"><div id="yyears" class="yyears"></div><button id="yx" class="iconbtn" aria-label="Zamknij"><svg><use href="#i-x"/></svg></button></div>
+  <div id="yslides" class="yslides"></div>
+</div>
+<div id="toast" class="toast" hidden></div>
+<div id="work" class="work" hidden role="status"><i></i><span></span></div>
+<div id="attr" class="attr"></div>
+<div id="scale" class="scale" hidden aria-hidden="true"><span></span><i></i></div>
+<button id="gpspill" class="gpspill" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h14M13 6l6 6-6 6"/></svg><span></span></button>
+
+<div id="loading" class="overlay splash"><svg class="splsky" aria-hidden="true"></svg><svg class="splridge" viewBox="0 360 300 260" preserveAspectRatio="none" aria-hidden="true"><path class="rb" d="M-10 470 L40 430 L70 448 L120 380 L150 410 L170 392 L205 440 L240 418 L310 470 V630 H-10Z"/><path class="rf" d="M-10 500 L50 452 L85 474 L135 420 L165 452 L215 405 L262 462 L310 438 V630 H-10Z"/><path class="rl" d="M-10 500 L50 452 L85 474 L135 420 L165 452 L215 405 L262 462 L310 438" vector-effect="non-scaling-stroke"/></svg><div class="spltitle">Zdrapka<small>górska</small></div><div class="spllogo" aria-hidden="true"><!-- (app/marks.js ringArcs() and medalBody(): test/marks.test.js keeps them the same) --><div class="splrot"><svg viewBox="0 0 100 100"><path class="a0" d="M3.49,47.10A46.6,46.6 0 0 1 47.10,3.49L47.10,10.71A39.4,39.4 0 0 0 10.71,47.10Z" fill="#2f9e7a" stroke="#2f9e7a" stroke-width="2.8" stroke-linejoin="round"/><path class="a1" d="M52.90,3.49A46.6,46.6 0 0 1 96.51,47.10L89.29,47.10A39.4,39.4 0 0 0 52.90,10.71Z" fill="#e0a11d" stroke="#e0a11d" stroke-width="2.8" stroke-linejoin="round"/><path class="a2" d="M96.51,52.90A46.6,46.6 0 0 1 52.90,96.51L52.90,89.29A39.4,39.4 0 0 0 89.29,52.90Z" fill="#b23a48" stroke="#b23a48" stroke-width="2.8" stroke-linejoin="round"/><path class="a3" d="M47.10,96.51A46.6,46.6 0 0 1 3.49,52.90L10.71,52.90A39.4,39.4 0 0 0 47.10,89.29Z" fill="#4459b8" stroke="#4459b8" stroke-width="2.8" stroke-linejoin="round"/></svg></div><svg class="splcore" viewBox="0 0 100 100"><defs><linearGradient id="splmd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7a52e6"/><stop offset="1" stop-color="#4a1fb8"/></linearGradient></defs><circle cx="50" cy="50" r="32" fill="url(#splmd)"/><g transform="translate(50 50) scale(1.75) translate(-12 -13)" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 19h19L14.5 6.5l-3.3 5.3-2.2-3z"/></g></svg></div><div class="panel box"><div class="spinner"></div><div id="loadmsg">Rozkładam mapę…</div>
+  <div id="mapdl" class="mapdl" hidden><div class="step">Krok 1 z 2</div><b>Mapy gór</b><span id="mapdlmsg"></span><div id="mapdlparts" class="mparts" hidden></div><div class="mdlbar" hidden><i id="mapdlbar"></i></div><button id="mapdlbtn" class="btn primary" disabled>Pobierz mapę</button></div>
+</div></div>
+<script src="app/splash.js"></script>
+
+<script src="vendor/maplibre-gl.js"></script>
+<script src="vendor/pmtiles.js"></script>
+<script type="module" src="app/app.js"></script>
+</body>
+</html>
